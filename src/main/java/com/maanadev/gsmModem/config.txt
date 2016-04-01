@@ -1,0 +1,5 @@
+asdasdada
+
+##PORT=COM5
+##PATH=F:\Developer\Sakuni\a.xlsx
+##FREQUENCY=9600

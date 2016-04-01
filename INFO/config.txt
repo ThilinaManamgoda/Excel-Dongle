@@ -1,4 +1,4 @@
-This the configuration file for the application .Dont write "#" in anywhere . 
+This the configuration file for the application .Don't write "#" or "%" in anywhere . 
 
 
 *Goto Device management
@@ -6,13 +6,21 @@ This the configuration file for the application .Dont write "#" in anywhere .
 *Select and doule click the desired Dongle(Modem)
 *Goto Modem tab and here you can see "COMX" 
 
-##PORT=COM5
+#%PORT=COM5
 
 
 *Your Excel file path
+*all the "/" should be replace with "//" or "\"
+#%PATH=F:\Developer\Sakuni\a.xlsx
 
-##PATH=F:\Developer\Sakuni\a.xlsx
+*This is a spec of Dongle.Don't change unless you know the configuration for your Dongle
 
-*This is a spec of Dongle.Don't change unless you know the congiuration for your Dongle
+#%FREQUENCY=9600
 
-##FREQUENCY=9600
+*Number:Sender
+
+#%NUMBER=94770445855
+
+Don't change this unless you Know What are you doing
+
+#%LOGFILE= 

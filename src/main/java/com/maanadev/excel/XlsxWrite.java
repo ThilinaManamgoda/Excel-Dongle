@@ -3,6 +3,7 @@ package com.maanadev.excel;
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 
 import com.maanadev.configurations.Configurations;
@@ -13,20 +14,27 @@ public class XlsxWrite extends XlsxCore {
 		super(configurations);
 	}
 
-	public void write(String home, double unit) {
+	public void write(String data []) {
 
 		initializeInput();
 		int rowNumber = sheet.getLastRowNum() + 1;
 
 		// creating an empty row
 		createRow(rowNumber);
-
+		Row row = sheet.getRow(rowNumber);
 		// Fill the cells with the data
 		Cell cell;
-		cell = sheet.getRow(rowNumber).getCell(COLUMNONE);
-		cell.setCellValue(home);
-		cell = sheet.getRow(rowNumber).getCell(COLUMNTWO);
-		cell.setCellValue(unit);
+		cell =row.getCell(COLUMNONE);
+		cell.setCellValue(Integer.parseInt(data[COLUMNONE]));
+		
+		cell = row.getCell(COLUMNTWO);
+		cell.setCellValue(Integer.parseInt(data[COLUMNTWO]));
+		
+		cell = row.getCell(COLUMNTHREE);
+		cell.setCellValue(Integer.parseInt(data[COLUMNTHREE]));
+		
+		cell = row.getCell(COLUMNFOUR);
+		cell.setCellValue(Integer.parseInt(data[COLUMNFOUR]));
 
 		// clearing resources
 		closeInputResource();

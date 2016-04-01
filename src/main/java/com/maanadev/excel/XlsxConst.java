@@ -6,5 +6,7 @@ public interface XlsxConst {
 
 	public static final int COLUMNONE = 0;
 	public static final int COLUMNTWO = 1;
-	public static final int COLUMNCOUNT = 2;
+	public static final int COLUMNTHREE = 2;
+	public static final int COLUMNFOUR = 3;
+	public static final int COLUMNCOUNT = 4;
 }

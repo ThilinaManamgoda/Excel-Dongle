@@ -4,7 +4,7 @@ public class Configurations {
 
 	public Configurations() {
 	}
-
+	private String LOGFILE;
 	private String PATH;
 	private String PORT;
 	private int FREQUENCY;
@@ -39,6 +39,14 @@ public class Configurations {
 
 	public void setGATEWAYNAME(String gATEWAYNAME) {
 		GATEWAYNAME = gATEWAYNAME;
+	}
+
+	public String getLOGFILE() {
+		return LOGFILE;
+	}
+
+	public void setLOGFILE(String lOGFILE) {
+		LOGFILE = lOGFILE;
 	}
 
 }

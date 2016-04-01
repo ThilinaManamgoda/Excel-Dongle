@@ -6,35 +6,75 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
+import org.smslib.AGateway;
+import org.smslib.AGateway.GatewayStatuses;
+import org.smslib.GatewayException;
+import org.smslib.IInboundMessageNotification;
+import org.smslib.InboundMessage;
 import org.smslib.Service;
+import org.smslib.TimeoutException;
+import org.smslib.Message.MessageTypes;
 import org.smslib.modem.SerialModemGateway;
 import com.maanadev.configurations.Configurations;
+import com.maanadev.excel.XlsxWrite;
 
 public class SmsReceiver {
 	static Configurations configurations;
-	private static final String CONFIG_FILE = "config.txt";
+	private static final String CONFIG_FILE = "F:/config.txt";
+	private static String NUMBER = "";
+	static Logger log = null;
 
 	public SmsReceiver() {
 	}
 
 	public void Initialize() throws Exception {
+		// Initialize Logger
+		log = Logger.getLogger(SmsReceiver.class.getName());
 
 		// Configure Dongle
+		log.debug("Setting up the Dongle");
 		SerialModemGateway gateway = new SerialModemGateway(configurations.getGATEWAYNAME(), configurations.getPORT(),
-				configurations.getFREQUENCY(), "", "");
-		gateway.setInbound(true);
-		gateway.setOutbound(true);
+				configurations.getFREQUENCY(), "", "E173");
 
-		HandleSMS handleSMS = new HandleSMS(configurations);
-		
+		gateway.setInbound(true);
+
+
+		log.debug("Setting up the Dongle is successful");
 		// configure Service
+		log.debug("configure Service");
 		Service service = Service.getInstance();
+		log.debug("Add the Gateway(Dongle) to service");
 		service.addGateway(gateway);
-		service.setInboundMessageNotification(handleSMS);// add smslistener to
-		// service
-		
+		service.setInboundMessageNotification(new IInboundMessageNotification() {
+
+			public void process(AGateway arg0, MessageTypes arg1, InboundMessage arg2) {
+				System.out.println("Message arrived");
+				if (arg2.getOriginator().equals(NUMBER)) {
+
+				
+					
+					String msg [] = arg2.getText().split(" ");
+					System.out.println(msg[0]+":"+msg[1]+":"+msg[2]+":"+msg[3]);
+					XlsxWrite xlsxWrite = new XlsxWrite(configurations);
+					xlsxWrite.write(msg);
+					try {
+						gateway.deleteMessage(arg2);
+					} catch (TimeoutException e) {
+						e.printStackTrace();
+					} catch (GatewayException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});// add smslistener to
+
 		service.startService();
-		System.out.println("Service is started !!!");
+		System.out.println("SERVER: Started!");
 
 	}
 
@@ -49,13 +89,13 @@ public class SmsReceiver {
 	}
 
 	public static void config() {
-		//setting up configuration object for the application
+		// setting up configuration object for the application
 		Configurations configurationstmp = new Configurations();
 		FileReader fileReader = null;
 
 		BufferedReader buffer = null;
 		try {
-			//reading the file
+			// reading the file
 			fileReader = new FileReader(new File(CONFIG_FILE));
 			buffer = new BufferedReader(fileReader);
 		} catch (FileNotFoundException e) {
@@ -77,9 +117,8 @@ public class SmsReceiver {
 
 		for (String line : data) {
 
-			String keyPlusData[] = line.split("##");
-
-			if (keyPlusData[0].equals("##")) {
+			String keyPlusData[] = line.split("%");
+			if (keyPlusData[0].equals("#")) {
 				String values[] = keyPlusData[1].split("=");
 
 				if (values[0].equals("PORT"))
@@ -88,6 +127,10 @@ public class SmsReceiver {
 					configurationstmp.setPATH(values[1]);
 				else if (values[0].equals("FREQUENCY"))
 					configurationstmp.setFREQUENCY(Integer.parseInt(values[1]));
+				else if (values[0].equals("NUMBER"))
+					NUMBER = values[1];
+				else if (values[0].equals("LOGFILE"))
+					configurationstmp.setLOGFILE(values[1]);
 			}
 
 		}
